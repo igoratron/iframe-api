@@ -1,0 +1,22 @@
+{
+  "name": "iframe-api",
+  "version": "0.0.1",
+  "description": "An attempt at creating a library to simplify creating an iframe api.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/igoratron/iframe-api.git"
+  },
+  "author": "Igor Czerwinski <czerwony@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/igoratron/iframe-api/issues"
+  },
+  "homepage": "https://github.com/igoratron/iframe-api",
+  "devDependencies": {
+    "jasmine": "^2.2.1"
+  }
+}
