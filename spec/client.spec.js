@@ -10,6 +10,10 @@ describe('Client', function() {
     beforeEach(function() {
       iframe = {};
 
+      iframe.contentWindow = jasmine.createSpyObj('window', [
+          'postMessage'
+      ]);
+
       document = global.document = jasmine.createSpyObj('document', [
           'createElement'
       ]);
@@ -23,6 +27,10 @@ describe('Client', function() {
       client = iframeClient.init('http://some-url');
     });
 
+    afterEach(function() {
+      jasmine.clock().uninstall();
+    });
+
     it('creates an iframe', function() {
       expect(document.createElement).toHaveBeenCalledWith('iframe');
     });
@@ -34,5 +42,23 @@ describe('Client', function() {
     it('attaches the iframe to the body element', function() {
       expect(document.body.appendChild).toHaveBeenCalledWith(iframe);
     });
+
+    describe('when the iframe loads', function() {
+
+      beforeEach(function(done) {
+        iframe.onload();
+        setImmediate(done);
+      });
+
+      it('sends a handshake to the iframe', function() {
+        expect(iframe.contentWindow.postMessage).toHaveBeenCalledWith('handshake');
+      });
+    });
   });
 });
+
+function setImmediate(callback) {
+  setTimeout(function() {
+    callback();
+  }, 0);
+}
