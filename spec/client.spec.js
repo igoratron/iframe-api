@@ -1,4 +1,5 @@
-var iframeClient = require('../lib/client');
+var iframeClient = require('../lib/client'),
+    jsdom = require('jsdom').jsdom;
 
 describe('Client', function() {
   var client,
@@ -8,46 +9,28 @@ describe('Client', function() {
   describe('when it initialises', function() {
 
     beforeEach(function() {
-      iframe = {};
-
-      iframe.contentWindow = jasmine.createSpyObj('window', [
-          'postMessage'
-      ]);
-
-      document = global.document = jasmine.createSpyObj('document', [
-          'createElement'
-      ]);
-
-      document.body = jasmine.createSpyObj('body', [
-          'appendChild'
-      ]);
-
-      document.createElement.and.returnValue(iframe);
+      document = global.document = jsdom();
 
       client = iframeClient.init('http://some-url');
-    });
-
-    afterEach(function() {
-      jasmine.clock().uninstall();
+      iframe = document.querySelector('iframe');
+      iframe.contentWindow.postMessage = jasmine.createSpy();
     });
 
     it('creates an iframe', function() {
-      expect(document.createElement).toHaveBeenCalledWith('iframe');
+      expect(iframe).toBeDefined();
     });
 
     it('loads the iframe from the given url', function() {
       expect(iframe.src).toBe('http://some-url');
     });
 
-    it('attaches the iframe to the body element', function() {
-      expect(document.body.appendChild).toHaveBeenCalledWith(iframe);
-    });
-
     describe('when the iframe loads', function() {
 
       beforeEach(function(done) {
-        iframe.onload();
-        setImmediate(done);
+        var event = document.createEvent('HTMLEvents');
+        event.initEvent('load', true, true);
+        iframe.dispatchEvent(event);
+        setTimeout(done, 0);
       });
 
       it('sends a handshake to the iframe', function() {
@@ -56,9 +39,3 @@ describe('Client', function() {
     });
   });
 });
-
-function setImmediate(callback) {
-  setTimeout(function() {
-    callback();
-  }, 0);
-}
