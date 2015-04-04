@@ -11,7 +11,9 @@ describe('Client', function() {
     beforeEach(function() {
       document = global.document = jsdom();
 
-      client = iframeClient.init('http://some-url');
+      client = iframeClient.init('http://some-url', {
+        origin: 'http://some-origin'
+      });
       iframe = document.querySelector('iframe');
       iframe.contentWindow.postMessage = jasmine.createSpy();
     });
@@ -33,8 +35,8 @@ describe('Client', function() {
         setTimeout(done, 0);
       });
 
-      it('sends a handshake to the iframe', function() {
-        expect(iframe.contentWindow.postMessage).toHaveBeenCalledWith('handshake');
+      it('sends a handshake to the iframe with the correct origin', function() {
+        expect(iframe.contentWindow.postMessage).toHaveBeenCalledWith('handshake', 'http://some-origin');
       });
     });
   });
