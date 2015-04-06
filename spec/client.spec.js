@@ -4,12 +4,14 @@ var iframeClient = require('../lib/client'),
 describe('Client', function() {
   var client,
       document,
+      window,
       iframe;
 
   describe('when it initialises', function() {
 
     beforeEach(function() {
       document = global.document = jsdom();
+      window = global.window = document.parentWindow;
 
       client = iframeClient.init('http://some-url', {
         origin: 'http://some-origin'
@@ -26,7 +28,7 @@ describe('Client', function() {
       expect(iframe.src).toBe('http://some-url');
     });
 
-    describe('when the iframe loads', function() {
+    xdescribe('when the iframe loads', function() {
 
       beforeEach(function(done) {
         var event = document.createEvent('HTMLEvents');
